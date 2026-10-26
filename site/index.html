@@ -220,5 +220,18 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 <script src="data-loader.js"></script>
 <script src="i18n.js"></script>
 <script src="app.js"></script>
+<script>
+// When this site is embedded in another website, tell the host page how tall it is.
+(function () {
+  if (window.parent === window) return;
+  let last = 0;
+  const send = () => {
+    const h = Math.ceil(document.documentElement.scrollHeight);
+    if (h !== last) { last = h; window.parent.postMessage({ type: 'ct-tracker-height', height: h }, '*'); }
+  };
+  new ResizeObserver(send).observe(document.body);
+  window.addEventListener('load', send);
+})();
+</script>
 </body>
 </html>
