@@ -1,0 +1,73 @@
+name: Update data and publish site
+
+on:
+  schedule:
+    # Mondays 12:00 UTC = 6am Central (winter) / 7am Central (summer)
+    - cron: "0 12 * * 1"
+  workflow_dispatch: {}   # "Run workflow" button for a manual refresh
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download every study from ClinicalTrials.gov
+        run: |
+          mkdir -p work
+          python3 scripts/fetch.py work/studies.jsonl
+
+      - name: Get last week's snapshot from the live site (for status changes)
+        run: |
+          url="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/data/snapshot.csv"
+          curl -fsSL "$url" -o work/prev_snapshot.csv || echo "No previous snapshot yet; status changes start next week."
+
+      - name: Build data files
+        run: |
+          RUN_DATE=$(TZ=America/Chicago date +%F)
+          PREV=""
+          [ -s work/prev_snapshot.csv ] && PREV=work/prev_snapshot.csv
+          python3 scripts/build.py work/studies.jsonl work/out "$RUN_DATE" $PREV | tee work/result.json
+          python3 - <<'PY'
+          import json, sys
+          r = json.load(open("work/result.json"))
+          if r["total"] < 500000 or r["open"] < 50000:
+              sys.exit(f"Sanity check failed, not publishing: {r}")
+          PY
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site/data
+          cp -r site/* _site/
+          cp work/out/* _site/data/
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
