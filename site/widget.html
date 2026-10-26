@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find a clinical trial</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: transparent; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #121212; }
+  .w { background: #FFED18; border-radius: 18px; padding: clamp(18px, 4vw, 36px); }
+  .eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: 12px; font-weight: 700; margin: 0 0 6px; }
+  h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: clamp(1.5rem, 4vw, 2.3rem); line-height: 1.15; margin: 0 0 8px; }
+  p.sub { margin: 0 0 16px; font-size: 1rem; }
+  p.sub b { font-weight: 700; }
+  form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; background: #fff; padding: 8px; border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.08); }
+  input { font: inherit; font-size: 1rem; border: 1px solid #e2e4e9; border-radius: 10px; padding: 12px 14px; min-width: 0; color: #121212; }
+  button { font: inherit; font-size: 1rem; font-weight: 600; border: 0; border-radius: 10px; padding: 12px 20px; background: #121212; color: #fff; cursor: pointer; }
+  @media (max-width: 480px) { form { grid-template-columns: 1fr; } }
+  .more { margin: 12px 0 0; font-size: 14px; }
+  .more a { color: #121212; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="w">
+  <p class="eyebrow" id="eyebrow">Free · Updated every week</p>
+  <h2 id="title">Find a clinical trial that could help you</h2>
+  <p class="sub" id="sub">Search studies open to new participants around the world.</p>
+  <form id="f">
+    <input id="q" type="search" autocomplete="off" aria-label="Search">
+    <button id="go" type="submit">Search trials</button>
+  </form>
+  <p class="more"><a id="browse" href="index.html" target="_blank" rel="noopener">Browse all trials →</a></p>
+</div>
+<script>
+(function () {
+  const T = {
+    en: { eyebrow: 'Free · Updated every week', title: 'Find a clinical trial that could help you', sub: (n) => n ? `Search <b>${n}</b> studies open to new participants around the world.` : 'Search studies open to new participants around the world.', ph: 'Condition, treatment or keyword', go: 'Search trials', browse: 'Browse all trials →' },
+    es: { eyebrow: 'Gratis · Actualizado cada semana', title: 'Encuentre un ensayo clínico que podría ayudarle', sub: (n) => n ? `Busque entre <b>${n}</b> estudios abiertos a nuevos participantes en todo el mundo.` : 'Busque estudios abiertos a nuevos participantes en todo el mundo.', ph: 'Enfermedad, tratamiento o palabra clave', go: 'Buscar ensayos', browse: 'Ver todos los ensayos →' },
+    fr: { eyebrow: 'Gratuit · Mis à jour chaque semaine', title: 'Trouvez un essai clinique qui pourrait vous aider', sub: (n) => n ? `Recherchez parmi <b>${n}</b> études ouvertes aux nouveaux participants dans le monde.` : 'Recherchez des études ouvertes aux nouveaux participants dans le monde.', ph: 'Maladie, traitement ou mot-clé', go: 'Rechercher', browse: 'Voir tous les essais →' },
+  };
+  const params = new URLSearchParams(location.search);
+  let lang = (params.get('lang') || navigator.language || 'en').slice(0, 2).toLowerCase();
+  if (!T[lang]) lang = 'en';
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.getElementById('eyebrow').textContent = t.eyebrow;
+  document.getElementById('title').textContent = t.title;
+  document.getElementById('q').placeholder = t.ph;
+  document.getElementById('go').textContent = t.go;
+  const browse = document.getElementById('browse');
+  browse.textContent = t.browse;
+  browse.href = 'index.html?lang=' + lang;
+  const sub = document.getElementById('sub');
+  sub.textContent = '';
+  sub.appendChild(document.createTextNode(t.sub(0)));
+  fetch('data/summary.json', { cache: 'no-cache' }).then((r) => r.json()).then((j) => {
+    const row = (j.rows || []).find((r) => r.metric === 'open');
+    if (!row) return;
+    const n = new Intl.NumberFormat(lang).format(row.value);
+    const [a, b] = t.sub('\u0001').split('\u0001').map((x) => x.replace(/<\/?b>/g, ''));
+    const strong = document.createElement('b'); strong.textContent = n;
+    sub.replaceChildren(document.createTextNode(a), strong, document.createTextNode(b));
+  }).catch(() => {});
+  document.getElementById('f').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = document.getElementById('q').value.trim();
+    const url = new URL('index.html', location.href);
+    if (q) url.searchParams.set('q', q);
+    url.searchParams.set('lang', lang);
+    window.open(url.toString(), '_blank', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

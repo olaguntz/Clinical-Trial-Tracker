@@ -3,11 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Global Clinical Trials Tracker</title>
+<title>Find a Clinical Trial | PreClinic Visit</title>
 <meta name="description" content="Find clinical trials open to new participants worldwide, and see how many studies are running by country, condition, phase and status. Updated every week from ClinicalTrials.gov. Available in English, Spanish and French.">
-<meta property="og:title" content="Global Clinical Trials Tracker">
+<meta property="og:title" content="Find a Clinical Trial | PreClinic Visit">
+<meta property="og:site_name" content="PreClinic Visit">
+<meta name="theme-color" content="#FFED18">
 <meta property="og:description" content="Find clinical trials open to new participants worldwide. Updated weekly from ClinicalTrials.gov.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%232f6fdb'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23FFED18'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23121212' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
 :root {
   --color-fg: #1d1f23; --color-fg-muted: #5f6570; --color-bg: #ffffff; --color-panel: #f6f7f9;
@@ -99,22 +101,83 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 @media (max-width: 640px) { .ct-hide-narrow { display: none; } }
+
+/* ---- PreClinic Visit branding ---- */
+:root { --pv-yellow: #FFED18; --pv-ink: #121212; }
+.pv-header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-md); justify-content: space-between; padding-bottom: var(--cds-gap-md); border-bottom: 1px solid var(--color-border-line); margin-bottom: var(--cds-gap-lg); }
+.pv-logo { display: inline-flex; align-items: center; gap: 10px; color: var(--color-fg); text-decoration: none; font-weight: 700; font-size: 1.15rem; letter-spacing: .01em; }
+.pv-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--pv-yellow); color: var(--pv-ink); display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; line-height: 1; }
+.pv-nav { display: flex; flex-wrap: wrap; gap: 4px var(--cds-gap-md); font-size: var(--cds-font-size-body); }
+.pv-nav a { color: var(--color-fg-muted); text-decoration: none; padding: 6px 2px; border-bottom: 2px solid transparent; }
+.pv-nav a:hover { color: var(--color-fg); }
+.pv-nav a.pv-cur { color: var(--color-fg); border-bottom-color: var(--pv-yellow); font-weight: 600; }
+.pv-right { display: flex; align-items: center; gap: var(--cds-gap-sm); }
+.pv-btn { background: var(--pv-yellow); color: var(--pv-ink); text-decoration: none; font-weight: 600; border-radius: 999px; padding: 8px 16px; font-size: var(--cds-font-size-body); white-space: nowrap; border: 0; cursor: pointer; font-family: inherit; }
+.pv-btn:hover { filter: brightness(.95); }
+.pv-hero { background: var(--pv-yellow); color: var(--pv-ink); border-radius: calc(var(--cds-radius) * 1.6); padding: clamp(24px, 5vw, 56px) clamp(18px, 5vw, 56px); margin-bottom: var(--cds-gap-lg); }
+.pv-eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: var(--cds-font-size-caption); font-weight: 700; margin: 0 0 8px; }
+.pv-hero h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.8rem, 4.5vw, 3rem); line-height: 1.1; margin: 0 0 12px; max-width: 22ch; }
+.pv-hero-sub { font-size: 1.05rem; margin: 0 0 20px; max-width: 60ch; }
+.pv-search { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; gap: 8px; background: #fff; padding: 8px; border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.08); max-width: 900px; }
+.pv-search input, .pv-search select { font: inherit; font-size: 1rem; border: 1px solid #e2e4e9; border-radius: 10px; padding: 12px 14px; color: #121212; background: #fff; min-width: 0; }
+.pv-search .pv-btn { background: var(--pv-ink); color: #fff; border-radius: 10px; padding: 12px 22px; font-size: 1rem; }
+@media (max-width: 720px) { .pv-search { grid-template-columns: 1fr; } }
+.ct-title { font-size: 1.5rem !important; }
+.pv-ad { margin: var(--cds-gap-lg) 0; text-align: center; min-height: 0; }
+.pv-ad-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--color-fg-muted); margin-bottom: 4px; }
+.pv-prep { margin-top: var(--cds-gap-xl); padding: clamp(20px, 4vw, 40px); border-radius: calc(var(--cds-radius) * 1.6); background: var(--color-panel); border: 1px solid var(--color-border-line); }
+.pv-prep h2 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.4rem, 3vw, 2rem); margin: 0 0 8px; }
+.pv-prep > p { color: var(--color-fg-muted); margin: 0 0 var(--cds-gap-lg); max-width: 60ch; }
+.pv-prep-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--cds-gap-md); }
+.pv-prep-card { display: flex; flex-direction: column; gap: 6px; padding: var(--cds-pad-lg); border-radius: var(--cds-radius); background: var(--color-bg); border: 1px solid var(--color-border-line); text-decoration: none; color: var(--color-fg); border-top: 4px solid var(--pv-yellow); }
+.pv-prep-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+.pv-prep-h { font-weight: 600; }
+.pv-prep-d { color: var(--color-fg-muted); font-size: var(--cds-font-size-body); flex: 1; }
+.pv-prep-go { font-weight: 600; margin-top: 6px; }
+.pv-footer p { margin: 6px 0; }
+.pv-foot-brand { font-weight: 700; color: var(--color-fg); margin-bottom: 6px; }
 </style>
 
 <div class="ct">
+  <header class="pv-header">
+    <a class="pv-logo" href="https://preclinicvisit.com/"><span class="pv-logo-mark" aria-hidden="true">+</span><span>PreClinic Visit</span></a>
+    <nav class="pv-nav" aria-label="Main">
+      <a class="pv-cur" href="./" aria-current="page" data-t="home.nav_trials"></a>
+      <a href="https://preclinicvisit.com/first-opinion" data-t="home.nav_first"></a>
+      <a href="https://preclinicvisit.com/early-insight" data-t="home.nav_early"></a>
+      <a href="https://preclinicvisit.com/second-opinion" data-t="home.nav_second"></a>
+    </nav>
+    <div class="pv-right">
+      <label class="ct-lang"><span class="ct-lang-label">Language</span>
+        <select class="ct-lang-select" aria-label="Language">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+        </select>
+      </label>
+      <a class="pv-btn" href="#prepare" data-t="home.nav_cta"></a>
+    </div>
+  </header>
+
+  <section class="pv-hero" id="search">
+    <p class="pv-eyebrow" data-t="home.eyebrow"></p>
+    <h1 data-t="home.hero_title"></h1>
+    <p class="pv-hero-sub" data-t="home.hero_sub"></p>
+    <div class="pv-search" role="search">
+      <input class="pv-q" type="search" autocomplete="off" aria-label="Search">
+      <select class="pv-country" aria-label="Country" data-source="by_country"></select>
+      <button class="pv-btn pv-go" type="button" data-t="home.hero_button"></button>
+    </div>
+  </section>
+
+  <aside class="pv-ad" data-ad="top" hidden><div class="pv-ad-label" data-t="home.ad_label"></div><div class="pv-ad-body"></div></aside>
+
   <div class="ct-top">
     <div>
-      <h1 class="ct-title" id="ct-title">Global Clinical Trials Tracker</h1>
+      <h2 class="ct-title" id="ct-title">Global Clinical Trials Tracker</h2>
       <p class="ct-takeaway" id="ct-takeaway"><span class="ct-tk-a"></span><b data-source="summary" data-field="value" data-where="metric=total" class="dash-skeleton">—</b><span class="ct-tk-b"></span><b data-source="summary" data-field="value" data-where="metric=open" class="dash-skeleton">—</b><span class="ct-tk-c"></span><b data-source="summary" data-field="value" data-where="metric=countries" class="dash-skeleton">—</b><span class="ct-tk-d"></span></p>
       <p class="ct-meta"><span class="ct-rf-a"></span><span data-source="refreshed" data-field="refreshed" data-row="0" class="ct-rf-date">—</span><span class="ct-rf-b"></span></p>
     </div>
-    <label class="ct-lang"><span class="ct-lang-label">Language</span>
-      <select class="ct-lang-select" aria-label="Language">
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="fr">Français</option>
-      </select>
-    </label>
   </div>
   <p class="ct-notice" id="ct-disclaimer"></p>
 
@@ -210,16 +273,35 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
   <section class="ct-page" data-page="learn" id="page-learn" hidden>
     <div class="ct-card ct-learn" id="card-learn"></div>
   </section>
-</div>
 
-<footer class="ct-footer">
-  Study data: <a href="https://clinicaltrials.gov" target="_blank" rel="noopener">ClinicalTrials.gov</a>, U.S. National Library of Medicine. Updated automatically every Monday. This site is not affiliated with ClinicalTrials.gov and is not medical advice.
-</footer>
+  <aside class="pv-ad" data-ad="mid" hidden><div class="pv-ad-label" data-t="home.ad_label"></div><div class="pv-ad-body"></div></aside>
+
+  <section class="pv-prep" id="prepare">
+    <h2 data-t="home.prep_title"></h2>
+    <p data-t="home.prep_sub"></p>
+    <div class="pv-prep-grid">
+      <a class="pv-prep-card" href="https://preclinicvisit.com/first-opinion"><span class="pv-prep-h" data-t="home.prep_first"></span><span class="pv-prep-d" data-t="home.prep_first_d"></span><span class="pv-prep-go" data-t="home.prep_go"></span></a>
+      <a class="pv-prep-card" href="https://preclinicvisit.com/early-insight"><span class="pv-prep-h" data-t="home.prep_early"></span><span class="pv-prep-d" data-t="home.prep_early_d"></span><span class="pv-prep-go" data-t="home.prep_go"></span></a>
+      <a class="pv-prep-card" href="https://preclinicvisit.com/second-opinion"><span class="pv-prep-h" data-t="home.prep_second"></span><span class="pv-prep-d" data-t="home.prep_second_d"></span><span class="pv-prep-go" data-t="home.prep_go"></span></a>
+    </div>
+  </section>
+
+  <aside class="pv-ad" data-ad="bottom" hidden><div class="pv-ad-label" data-t="home.ad_label"></div><div class="pv-ad-body"></div></aside>
+
+  <footer class="ct-footer pv-footer">
+    <div class="pv-foot-brand">PreClinic Visit</div>
+    <p data-t="home.footer_note"></p>
+    <p data-t="home.footer_data"></p>
+    <p>© <span class="pv-year">2026</span> PreClinic Visit</p>
+  </footer>
+</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="data-loader.js"></script>
 <script src="i18n.js"></script>
 <script src="app.js"></script>
+<script src="ads-config.js"></script>
+<script src="ads.js"></script>
 <script>
 // When this site is embedded in another website, tell the host page how tall it is.
 (function () {

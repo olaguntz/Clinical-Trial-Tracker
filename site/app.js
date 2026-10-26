@@ -400,11 +400,46 @@
     if (tab === 'finder') drawFinder();
   }
 
+  // ---------- home-page search box ----------
+  function openFinder(q, country) {
+    Object.assign(F, { q: q || '', country: country || '', limit: PAGE_SIZE });
+    showTab('finder');
+    const qi = root.querySelector('.ct-f-q');
+    if (qi) qi.value = F.q;
+    root.querySelector('.ct-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  const heroQ = root.querySelector('.pv-q');
+  const heroC = root.querySelector('.pv-country');
+  const heroGo = () => openFinder(heroQ.value.trim(), heroC.value);
+  root.querySelector('.pv-go').addEventListener('click', heroGo);
+  heroQ.addEventListener('keydown', (e) => { if (e.key === 'Enter') heroGo(); });
+  let heroCountries = -1;
+  function drawHero() {
+    heroQ.placeholder = tr('home.hero_placeholder');
+    const rows = rowsOf('by_country').filter((r) => Number(r.open_trials) > 0);
+    const key = rows.length + lang;
+    if (key !== heroCountries) {
+      heroCountries = key;
+      const keep = heroC.value;
+      setOptions(heroC, [['', tr('home.hero_any_country')], ...rows.map((r) => r.country).sort((a, b) => a.localeCompare(b)).map((c) => [c, c])], keep);
+    }
+  }
+  const baseDraw = draw;
+  draw = function () { baseDraw(); drawHero(); };
+
   // Start in the visitor's browser language when it is Spanish or French.
   const pref = (navigator.language || 'en').slice(0, 2).toLowerCase();
   if (LANGS.includes(pref)) { lang = pref; root.querySelector('.ct-lang-select').value = pref; document.documentElement.lang = pref; }
 
+  // Links from other pages can open the finder pre-filled: ?q=asthma&country=Mexico&lang=es
+  const params = new URLSearchParams(location.search);
+  const pl = (params.get('lang') || '').toLowerCase();
+  if (LANGS.includes(pl)) { lang = pl; root.querySelector('.ct-lang-select').value = pl; document.documentElement.lang = pl; }
+
   dash.onData(draw);
-  const named = (location.hash || '').slice(1);
-  if (named) showTab(named);
+  if (params.get('q') || params.get('country')) openFinder(params.get('q') || '', params.get('country') || '');
+  else {
+    const named = (location.hash || '').slice(1);
+    if (named && named !== 'prepare' && named !== 'search') showTab(named);
+  }
 })();

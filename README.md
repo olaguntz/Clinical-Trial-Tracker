@@ -24,3 +24,11 @@ To refresh by hand: **Actions → Update data and publish site → Run workflow*
 ## Disclaimer
 
 For information only; not medical advice. Study details come from ClinicalTrials.gov; always confirm with the study team. This site is not affiliated with ClinicalTrials.gov.
+
+## PreClinic Visit home page
+
+`site/index.html` is branded as the PreClinic Visit "Find a clinical trial" home page, with links to the First Opinion, Early Insight and Second Opinion assessments on preclinicvisit.com.
+
+- **Search box for other pages:** `site/widget.html` is a small "Find a clinical trial" search box to embed elsewhere (for example in a GoDaddy HTML section). Add `?lang=es` or `?lang=fr` to its address to fix the language.
+- **Pre-filled links:** `index.html?q=asthma&country=Mexico&lang=es` opens the trial finder with those filters.
+- **Ads:** ad spaces are off until `site/ads-config.js` has an AdSense publisher ID and ad-unit numbers. Ads never appear inside trial results.
